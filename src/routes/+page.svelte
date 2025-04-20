@@ -1,6 +1,8 @@
 <script>
+    import { goto } from '$app/navigation';
+    
     function goToCreate() {
-      window.location.href = '/create';
+      goto('/create');
     }
   </script>
   

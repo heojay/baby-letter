@@ -1,8 +1,11 @@
 import { json } from '@sveltejs/kit';
-import { GoogleGenAI } from "@google/genai";
+import { generateText } from "ai"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { GOOGLE_API_KEY } from '$env/static/private';
 
-const ai = new GoogleGenAI({ apiKey: GOOGLE_API_KEY });
+const googleAI = createGoogleGenerativeAI({
+  apiKey: GOOGLE_API_KEY,
+});
 const MODEL = "gemini-2.0-flash-lite";
 
 export async function POST({ request }) {
@@ -35,9 +38,9 @@ export async function POST({ request }) {
 
 지침을 어길 경우 콘텐츠가 무효 처리됩니다. 반드시 지침을 준수하여 HTML 코드만 생성해주세요.    
     `;
-    const aiResponse = await ai.models.generateContent({
-        model: MODEL,
-        contents: prompt,
+    const aiResponse = await generateText({
+      model: googleAI(MODEL),
+      prompt: prompt,
     });
 
     const newsletterContent = aiResponse.text;

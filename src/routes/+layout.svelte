@@ -1,28 +1,28 @@
 <script>
-  import { page } from '$app/state';
-  import { invalidate, goto } from '$app/navigation';
-  import { authStore } from '$lib/stores/auth.svelte';
-  import "../app.css";
-  
-  let { children } = $props();
-  
-  $effect(() => {
-    const {
-      data: { subscription },
-    } = page.data.supabase.auth.onAuthStateChange(() => {
-      invalidate('supabase:auth');
-    });
+import { goto, invalidate } from "$app/navigation";
+import { page } from "$app/state";
+import { authStore } from "$lib/stores/auth.svelte";
+import "../app.css";
 
-    // Update user store when auth state changes
-    authStore.isLoading = false;
-    if (page.data.session) {
-      authStore.user = page.data.session.user;
-    } else {
-      authStore.user = null;
-    }
+const { children } = $props();
 
-    return () => subscription.unsubscribe();
-  });
+$effect(() => {
+	const {
+		data: { subscription },
+	} = page.data.supabase.auth.onAuthStateChange(() => {
+		invalidate("supabase:auth");
+	});
+
+	// Update user store when auth state changes
+	authStore.isLoading = false;
+	if (page.data.session) {
+		authStore.user = page.data.session.user;
+	} else {
+		authStore.user = null;
+	}
+
+	return () => subscription.unsubscribe();
+});
 </script>
 
 <main>

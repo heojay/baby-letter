@@ -1,10 +1,10 @@
 <script>
-    import { goto } from '$app/navigation';
-    
-    function goToCreate() {
-      goto('/create');
-    }
-  </script>
+import { goto } from "$app/navigation";
+
+function goToCreate() {
+	goto("/create");
+}
+</script>
   
   <section class="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 flex flex-col items-center justify-center text-center p-6">
     <h1 class="text-4xl md:text-6xl font-bold text-gray-800 mb-6 leading-tight">

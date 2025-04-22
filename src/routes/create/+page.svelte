@@ -1,43 +1,45 @@
 <script lang="ts">
-  const questions = [
-    '이번 주 아이가 새롭게 보여준 행동이나 변화가 있었나요?',
-    '아이와 함께한 일상 중, 가장 행복했던 순간은 언제였나요?',
-    '이번 주 아이를 보며 어떤 감정을 느꼈나요?'
-  ];
+const questions = [
+	"이번 주 아이가 새롭게 보여준 행동이나 변화가 있었나요?",
+	"아이와 함께한 일상 중, 가장 행복했던 순간은 언제였나요?",
+	"이번 주 아이를 보며 어떤 감정을 느꼈나요?",
+];
 
-  let answers = $state(['', '', '']);
-  let errorMessage = $state('');
-  let isLoading = $state(false);
-  let newsletter = $state('');
+const answers = $state(["", "", ""]);
+let errorMessage = $state("");
+let isLoading = $state(false);
+let newsletter = $state("");
 
-  async function handleSubmit() {
-    try {
-      isLoading = true;
+async function handleSubmit() {
+	try {
+		isLoading = true;
 
-      // 답변들을 하나의 문장으로 이어붙임
-      const formattedInput = questions.map((q, i) => `[질문 ${i + 1}]\n${q}\n\n[답변 ${i + 1}]\n${answers[i]}`).join('\n\n');
+		// 답변들을 하나의 문장으로 이어붙임
+		const formattedInput = questions
+			.map((q, i) => `[질문 ${i + 1}]\n${q}\n\n[답변 ${i + 1}]\n${answers[i]}`)
+			.join("\n\n");
 
-      const response = await fetch('/api/generate-newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weeklyNote: formattedInput })
-      });
+		const response = await fetch("/api/generate-newsletter", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ weeklyNote: formattedInput }),
+		});
 
-      if (!response.ok) throw new Error('뉴스레터 생성에 실패했습니다.');
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      if (data.newsletter) {
-        newsletter = data.newsletter;
-      } else {
-        throw new Error('뉴스레터 생성에 실패했습니다.');
-      }
-
-    } catch (error) {
-      errorMessage = error instanceof Error ? error.message : '오류가 발생했습니다.';
-    } finally {
-      isLoading = false;
-    }
-  }
+		if (!response.ok) throw new Error("뉴스레터 생성에 실패했습니다.");
+		const data = await response.json();
+		if (data.error) throw new Error(data.error);
+		if (data.newsletter) {
+			newsletter = data.newsletter;
+		} else {
+			throw new Error("뉴스레터 생성에 실패했습니다.");
+		}
+	} catch (error) {
+		errorMessage =
+			error instanceof Error ? error.message : "오류가 발생했습니다.";
+	} finally {
+		isLoading = false;
+	}
+}
 </script>
 
 <h1 class="text-3xl font-bold text-center mt-8">주간 뉴스레터 생성</h1>

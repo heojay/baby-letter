@@ -1,19 +1,19 @@
-import { json } from '@sveltejs/kit';
-import { generateText } from "ai"
-import { createGoogleGenerativeAI } from "@ai-sdk/google"
-import { GOOGLE_API_KEY } from '$env/static/private';
+import { GOOGLE_API_KEY } from "$env/static/private";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { json } from "@sveltejs/kit";
+import { generateText } from "ai";
 
 const googleAI = createGoogleGenerativeAI({
-  apiKey: GOOGLE_API_KEY,
+	apiKey: GOOGLE_API_KEY,
 });
 const MODEL = "gemini-2.0-flash-lite";
 
 export async function POST({ request }) {
-  try {
-    const { weeklyNote } = await request.json();
+	try {
+		const { weeklyNote } = await request.json();
 
-    // Generate newsletter content using Gemini
-    const prompt = `입력 내용은 부모가 자녀와 함께한 한 주를 요약한 것으로, 다음 조건에 따라 뉴스레터 형태의 HTML만 생성해주세요.
+		// Generate newsletter content using Gemini
+		const prompt = `입력 내용은 부모가 자녀와 함께한 한 주를 요약한 것으로, 다음 조건에 따라 뉴스레터 형태의 HTML만 생성해주세요.
 
 입력: ${weeklyNote}
 
@@ -38,25 +38,26 @@ export async function POST({ request }) {
 
 지침을 어길 경우 콘텐츠가 무효 처리됩니다. 반드시 지침을 준수하여 HTML 코드만 생성해주세요.    
     `;
-    const aiResponse = await generateText({
-      model: googleAI(MODEL),
-      prompt: prompt,
-    });
+		const aiResponse = await generateText({
+			model: googleAI(MODEL),
+			prompt: prompt,
+		});
 
-    const newsletterContent = aiResponse.text;
+		const newsletterContent = aiResponse.text;
 
-    if (!newsletterContent) throw new Error('Failed to generate newsletter content');
+		if (!newsletterContent)
+			throw new Error("Failed to generate newsletter content");
 
-    const start = newsletterContent.indexOf('<html>');
-    const end = newsletterContent.lastIndexOf('</html>') + '</html>'.length;
-    const htmlContent = newsletterContent.substring(start, end);
-    if (!htmlContent) throw new Error('Invalid HTML content generated');
+		const start = newsletterContent.indexOf("<html>");
+		const end = newsletterContent.lastIndexOf("</html>") + "</html>".length;
+		const htmlContent = newsletterContent.substring(start, end);
+		if (!htmlContent) throw new Error("Invalid HTML content generated");
 
-    return json({
-        newsletter: htmlContent,
-    });
-  } catch (error) {
-    console.error('Error generating newsletter:', error);
-    return json({ error: error.message }, { status: 500 });
-  }
+		return json({
+			newsletter: htmlContent,
+		});
+	} catch (error) {
+		console.error("Error generating newsletter:", error);
+		return json({ error: error.message }, { status: 500 });
+	}
 }

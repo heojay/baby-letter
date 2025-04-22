@@ -1,39 +1,39 @@
 <script>
-  import { page } from '$app/state';
-  import { goto } from '$app/navigation';
-  import { authStore } from '$lib/stores/auth.svelte';
+import { goto } from "$app/navigation";
+import { page } from "$app/state";
+import { authStore } from "$lib/stores/auth.svelte";
 
-  let loading = $state(false);
-  let error = $state(null);
+let loading = $state(false);
+let error = $state(null);
 
-  $effect(() => {
-    // Redirect if already logged in
-    if (authStore.user) {
-      goto('/');
-    }
-  });
+$effect(() => {
+	// Redirect if already logged in
+	if (authStore.user) {
+		goto("/");
+	}
+});
 
-  async function signInWithGoogle() {
-    try {
-      loading = true;
-      error = null;
-      
-      const { data, error: signInError } = await page.data.supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
-      });
-      
-      if (signInError) throw signInError;
-      
-    } catch (err) {
-      console.error('Error signing in with Google:', err);
-      error = err.message || '로그인 중 오류가 발생했습니다.';
-    } finally {
-      loading = false;
-    }
-  }
+async function signInWithGoogle() {
+	try {
+		loading = true;
+		error = null;
+
+		const { data, error: signInError } =
+			await page.data.supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${window.location.origin}/auth/callback`,
+				},
+			});
+
+		if (signInError) throw signInError;
+	} catch (err) {
+		console.error("Error signing in with Google:", err);
+		error = err.message || "로그인 중 오류가 발생했습니다.";
+	} finally {
+		loading = false;
+	}
+}
 </script>
 
 <div class="flex justify-center items-center min-h-[60vh]">
